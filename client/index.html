@@ -1,31 +1,44 @@
-<!-- index.html -->
-
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Superhero Search</title>
-    <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Superhero API Test</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Superhero Search</h1>
+    <h1>Superhero Information</h1>
     <div>
-        <label for="searchField">Search by:</label>
-        <select id="searchField">
-            <option value="name">Name</option>
-            <option value="race">Race</option>
-            <option value="publisher">Publisher</option>
-            <option value="power">Power</option>
-        </select>
-        <input type="text" id="searchInput" placeholder="Enter search term">
-        <button onclick="searchSuperheroes()">Search</button>
+        <label for="heroId">Superhero ID:</label>
+        <input type="number" id="heroId" placeholder="Enter ID">
+        <button onclick="getSuperheroInfo()">Get Info</button>
+        <div id="infoResult"></div>
     </div>
 
-    <h2>Search Results</h2>
-    <div id="searchResults"></div>
+    <h1>Superhero Powers</h1>
+    <div>
+        <label for="powersId">Superhero ID:</label>
+        <input type="number" id="powersId" placeholder="Enter ID">
+        <button onclick="getSuperheroPowers()">Get Powers</button>
+        <div id="powersResult"></div>
+    </div>
 
-    <h2>Favorite Lists</h2>
-    <ul id="favoriteLists"></ul>
+    <h1>Publishers</h1>
+    <div>
+        <button onclick="getPublishers()">Get Publishers</button>
+        <div id="publishersResult"></div>
+    </div>
 
-    <script src="scripts.js"></script>
+    <h1>Search Superheroes</h1>
+    <div>
+        <label for="searchField">Search Field:</label>
+        <input type="text" id="searchField" placeholder="Enter Field">
+        <label for="searchPattern">Search Pattern:</label>
+        <input type="text" id="searchPattern" placeholder="Enter Pattern">
+        <button onclick="searchSuperheroes()">Search</button>
+        <div id="searchResult"></div>
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>

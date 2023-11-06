@@ -1,35 +1,54 @@
-// scripts.js
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('getInfoButton').addEventListener('click', getSuperheroInfo);
+    document.getElementById('getPowersButton').addEventListener('click', getSuperheroPowers);
+    document.getElementById('getPublishersButton').addEventListener('click', getPublishers);
+    document.getElementById('searchButton').addEventListener('click', searchSuperheroes);
+});
 
-const baseURL = 'http://localhost:3000/api'; // Replace with your API endpoint
+function getSuperheroInfo() {
+    const heroId = document.getElementById('heroId').value;
+    fetch(`/api/superheroes/${heroId}`)
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('infoResult').textContent = JSON.stringify(data, null, 2);
+        })
+        .catch(error => {
+            document.getElementById('infoResult').textContent = `Error: ${error.message}`;
+        });
+}
+
+function getSuperheroPowers() {
+    const powersId = document.getElementById('powersId').value;
+    fetch(`/api/superheroes/${powersId}/powers`)
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('powersResult').textContent = JSON.stringify(data, null, 2);
+        })
+        .catch(error => {
+            document.getElementById('powersResult').textContent = `Error: ${error.message}`;
+        });
+}
+
+function getPublishers() {
+    fetch(`/api/publishers`)
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('publishersResult').textContent = JSON.stringify(data, null, 2);
+        })
+        .catch(error => {
+            document.getElementById('publishersResult').textContent = `Error: ${error.message}`;
+        });
+}
 
 function searchSuperheroes() {
-    const field = document.getElementById('searchField').value;
-    const pattern = document.getElementById('searchInput').value;
-
-    // Use fetch to send a GET request to the search endpoint on your back-end
-    fetch(`${baseURL}/superheroes/search?field=${field}&pattern=${pattern}`)
+    const searchField = document.getElementById('searchField').value;
+    const searchPattern = document.getElementById('searchPattern').value;
+    fetch(`/api/search-superheroes?field=${searchField}&pattern=${searchPattern}`)
         .then(response => response.json())
-        .then(data => displaySearchResults(data))
-        .catch(error => console.error('Error:', error));
-}
-
-function displaySearchResults(results) {
-    const searchResults = document.getElementById('searchResults');
-    searchResults.innerHTML = '';
-
-    if (results.length === 0) {
-        searchResults.textContent = 'No results found.';
-    } else {
-        results.forEach(superhero => {
-            const superheroElement = document.createElement('div');
-            superheroElement.textContent = `Name: ${superhero.name}, Race: ${superhero.race}, Publisher: ${superhero.publisher}`;
-            searchResults.appendChild(superheroElement);
+        .then(data => {
+            document.getElementById('searchResult').textContent = JSON.stringify(data, null, 2);
+        })
+        .catch(error => {
+            document.getElementById('searchResult').textContent = `Error: ${error.message}`;
         });
-    }
 }
-
-// Additional functions to implement favorites and sorting go here...
-
-// Call your back-end functions to create and retrieve lists, sort data, etc.
-
-// Ensure to sanitize and validate user inputs to prevent security issues.
