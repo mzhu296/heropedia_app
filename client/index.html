@@ -3,33 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Superhero API Test</title>
+    <title>Superhero web app</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <h1>Superhero Information</h1>
+
     <div>
         <label for="heroId">Superhero ID:</label>
-        <input type="number" id="heroId" placeholder="Enter ID">
-        <button onclick="getSuperheroInfo()">Get Info</button>
-        <div id="infoResult"></div>
+        <input type="text" id="heroId">
+        <button id="getInfoButton">Get Superhero Info</button>
+        <pre id="infoResult"></pre>
     </div>
 
-    <h1>Superhero Powers</h1>
     <div>
         <label for="powersId">Superhero ID:</label>
-        <input type="number" id="powersId" placeholder="Enter ID">
-        <button onclick="getSuperheroPowers()">Get Powers</button>
-        <div id="powersResult"></div>
+        <input type="text" id="powersId">
+        <button id="getPowersButton">Get Superhero Powers</button>
+        <pre id="powersResult"></pre>
     </div>
 
-    <h1>Publishers</h1>
     <div>
-        <button onclick="getPublishers()">Get Publishers</button>
-        <div id="publishersResult"></div>
+        <button id="getPublishersButton">Get Publishers</button>
+        <pre id="publishersResult"></pre>
     </div>
 
-    <h1>Search Superheroes</h1>
+    <h2>Search Superheroes</h2>
     <div>
         <label for="searchField">Search Field:</label>
         <select id="searchField">
@@ -38,29 +37,31 @@
             <option value="publisher">Publisher</option>
             <option value="power">Power</option>
         </select>
+        <label for="searchPattern">Search Pattern:</label>
         <input type="text" id="searchPattern">
+        <label for="resultLimit">Result Limit:</label>
+        <input type="number" id="resultLimit">
         <button id="searchButton">Search</button>
-        <div id="searchResult"></div>        
+        <div id="searchResult"></div>
     </div>
 
-    <div class="container">
-        <h2>Create a New Superhero List</h2>
-        <input type="text" id="listName" placeholder="Enter List Name">
-        <button onclick="createSuperheroList()">Create List</button>
+    <h1>Superhero Lists</h1>
 
-        <h2>Save Superhero IDs to List</h2>
-        <input type="text" id="listNameForIds" placeholder="Enter List Name">
-        <input type="text" id="superheroIds" placeholder="Enter Superhero IDs (comma-separated)">
-        <button onclick="saveSuperheroIdsToList()">Save IDs to List</button>
+    <h2>Create a New List</h2>
+    <input type="text" id="newListName" placeholder="List Name">
+    <button onclick="createList()">Create</button>
 
-        <h2>Get Superhero IDs from List</h2>
-        <input type="text" id="listNameForGetIds" placeholder="Enter List Name">
-        <button onclick="getSuperheroIdsFromList()">Get IDs</button>
+    <h2>Manage Superhero Lists</h2>
+    <select id="listSelector">
+        <option value="">Select a List</option>
+    </select>
+    <input type="text" id="superheroIds" placeholder="Superhero IDs (comma-separated)">
+    <button onclick="saveSuperheroIds()">Save Superhero IDs</button>
+    <button onclick="getSuperheroIds()">Get Superhero IDs</button>
+    <button onclick="deleteList()">Delete List</button>
 
-        <h2>Delete Superhero List</h2>
-        <input type="text" id="listNameForDelete" placeholder="Enter List Name">
-        <button onclick="deleteSuperheroList()">Delete List</button>
-    </div>
+    <h2>Superheroes in Selected List</h2>
+    <div id="superheroesList"></div>
 
     <script src="script.js"></script>
 </body>

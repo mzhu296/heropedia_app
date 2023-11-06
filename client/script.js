@@ -1,137 +1,165 @@
-document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('getInfoButton').addEventListener('click', getSuperheroInfo);
-    document.getElementById('getPowersButton').addEventListener('click', getSuperheroPowers);
-    document.getElementById('getPublishersButton').addEventListener('click', getPublishers);
-    document.getElementById('searchButton').addEventListener('click', searchSuperheroes);
+document.addEventListener('DOMContentLoaded', function () {
+    const getInfoButton = document.getElementById('getInfoButton');
+    const getPowersButton = document.getElementById('getPowersButton');
+    const getPublishersButton = document.getElementById('getPublishersButton');
+    const searchButton = document.getElementById('searchButton');
+
+    getInfoButton.addEventListener('click', getSuperheroInfo);
+    getPowersButton.addEventListener('click', getSuperheroPowers);
+    getPublishersButton.addEventListener('click', getPublishers);
+    searchButton.addEventListener('click', searchSuperheroes);
 });
+
+function fetchAndDisplayData(url, resultElementId) {
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            const resultElement = document.getElementById(resultElementId);
+            resultElement.textContent = JSON.stringify(data, null, 2);
+        })
+        .catch(error => {
+            const resultElement = document.getElementById(resultElementId);
+            resultElement.textContent = `Error: ${error.message}`;
+        });
+}
 
 function getSuperheroInfo() {
     const heroId = document.getElementById('heroId').value;
-    fetch(`/api/superheroes/${heroId}`)
-        .then(response => response.json())
-        .then(data => {
-            document.getElementById('infoResult').textContent = JSON.stringify(data, null, 2);
-        })
-        .catch(error => {
-            document.getElementById('infoResult').textContent = `Error: ${error.message}`;
-        });
+    const url = `/api/superheroes/${heroId}`;
+    fetchAndDisplayData(url, 'infoResult');
 }
 
 function getSuperheroPowers() {
     const powersId = document.getElementById('powersId').value;
-    fetch(`/api/superheroes/${powersId}/powers`)
-        .then(response => response.json())
-        .then(data => {
-            document.getElementById('powersResult').textContent = JSON.stringify(data, null, 2);
-        })
-        .catch(error => {
-            document.getElementById('powersResult').textContent = `Error: ${error.message}`;
-        });
+    const url = `/api/superheroes/${powersId}/powers`;
+    fetchAndDisplayData(url, 'powersResult');
 }
 
 function getPublishers() {
-    fetch(`/api/publishers`)
-        .then(response => response.json())
-        .then(data => {
-            document.getElementById('publishersResult').textContent = JSON.stringify(data, null, 2);
-        })
-        .catch(error => {
-            document.getElementById('publishersResult').textContent = `Error: ${error.message}`;
-        });
+    const url = '/api/publishers';
+    fetchAndDisplayData(url, 'publishersResult');
 }
 
-document.getElementById('searchButton').addEventListener('click', function () {
+function searchSuperheroes() {
     const searchField = document.getElementById('searchField').value;
     const searchPattern = document.getElementById('searchPattern').value;
+    const resultLimit = parseInt(document.getElementById('resultLimit').value);
+    const url = `/api/search-superheroes?field=${searchField}&pattern=${searchPattern}`;
 
-    fetch(`/api/search-superheroes?field=${searchField}&pattern=${searchPattern}`)
+    fetch(url)
         .then(response => response.json())
         .then(data => {
-            // Handle the search results here, e.g., display them on the page.
-            displaySearchResults(data);
+            const limitedResults = data.slice(0, resultLimit); // Limit the results
+            displaySearchResults(limitedResults);
         })
         .catch(error => {
             console.error('Search error:', error);
         });
-});
+}
 
 function displaySearchResults(results) {
     const searchResultElement = document.getElementById('searchResult');
-    // Clear previous results
     searchResultElement.innerHTML = '';
 
     if (results.length === 0) {
         searchResultElement.textContent = 'No result found.';
     } else {
-        // Loop through the search results and display them as needed
         results.forEach(hero => {
             const heroInfo = document.createElement('div');
-            heroInfo.textContent = `Name: ${hero.name}, Race: ${hero.Race}, Publisher: ${hero.Publisher}, Power: ${hero.power}`;
+            heroInfo.textContent = `Hero ID: ${hero.id}`;
             searchResultElement.appendChild(heroInfo);
         });
     }
 }
 
-// Functions to interact with the API
-
-async function createSuperheroList() {
-    const listName = document.getElementById('listName').value;
-    try {
-        const response = await fetch('/api/create-superhero-list', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ name: listName })
+document.addEventListener('DOMContentLoaded', () => {
+    // Populate the select dropdown with existing lists
+    const listSelector = document.getElementById('listSelector');
+    fetch(`/api/lists`)
+        .then(response => response.json())
+        .then(data => {
+            data.forEach(list => {
+                const option = document.createElement('option');
+                option.value = list;
+                option.text = list;
+                listSelector.appendChild(option);
+            });
         });
-        const data = await response.json();
-        console.log(data);
-    } catch (error) {
-        console.error('Error:', error);
+});
+
+function createList() {
+    const newListName = document.getElementById('newListName').value;
+    if (newListName) {
+        fetch(`/api/lists/${newListName}`, { method: 'POST' })
+            .then(response => {
+                if (response.status === 201) {
+                    alert('List created successfully');
+                } else if (response.status === 400) {
+                    alert('List name already exists');
+                }
+            });
     }
 }
 
-async function saveSuperheroIdsToList() {
-    const listName = document.getElementById('listNameForIds').value;
-    const superheroIds = document.getElementById('superheroIds').value.split(',');
-
-    try {
-        const response = await fetch(`/api/save-superhero-ids/${listName}`, {
+function saveSuperheroIds() {
+    const listName = document.getElementById('listSelector').value;
+    const superheroIds = document.getElementById('superheroIds').value;
+    if (listName && superheroIds) {
+        const requestBody = { superheroIds: superheroIds.split(',').map(id => id.trim()) };
+        fetch(`/api/lists/${listName}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ ids: superheroIds })
-        });
-        const data = await response.json();
-        console.log(data);
-    } catch (error) {
-        console.error('Error:', error);
+            body: JSON.stringify(requestBody)
+        })
+            .then(response => {
+                if (response.status === 200) {
+                    alert('Superhero IDs saved successfully');
+                } else if (response.status === 404) {
+                    alert('List does not exist');
+                }
+            });
     }
 }
 
-async function getSuperheroIdsFromList() {
-    const listName = document.getElementById('listNameForGetIds').value;
-
-    try {
-        const response = await fetch(`/api/get-superhero-ids/${listName}`);
-        const data = await response.json();
-        console.log(data);
-    } catch (error) {
-        console.error('Error:', error);
+function getSuperheroIds() {
+    const listName = document.getElementById('listSelector').value;
+    if (listName) {
+        fetch(`/api/lists/${listName}`)
+            .then(response => {
+                if (response.status === 200) {
+                    return response.json();
+                } else if (response.status === 404) {
+                    alert('List does not exist');
+                    return null;
+                }
+            })
+            .then(data => {
+                if (data) {
+                    const superheroIds = data.superheroIds.join(', ');
+                    alert(`Superhero IDs in the list: ${superheroIds}`);
+                }
+            });
     }
 }
 
-async function deleteSuperheroList() {
-    const listName = document.getElementById('listNameForDelete').value;
-
-    try {
-        const response = await fetch(`/api/delete-superhero-list/${listName}`, {
-            method: 'DELETE'
-        });
-        const data = await response.json();
-        console.log(data);
-    } catch (error) {
-        console.error('Error:', error);
+function deleteList() {
+    const listName = document.getElementById('listSelector').value;
+    if (listName) {
+        fetch(`/api/lists/${listName}`, { method: 'DELETE' })
+            .then(response => {
+                if (response.status === 204) {
+                    alert('List deleted successfully');
+                    // Remove the deleted list from the dropdown
+                    const listSelector = document.getElementById('listSelector');
+                    const optionToRemove = Array.from(listSelector.options).find(option => option.value === listName);
+                    if (optionToRemove) {
+                        listSelector.removeChild(optionToRemove);
+                    }
+                } else if (response.status === 404) {
+                    alert('List does not exist');
+                }
+            });
     }
 }
