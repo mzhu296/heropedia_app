@@ -72,94 +72,51 @@ function displaySearchResults(results) {
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    // Populate the select dropdown with existing lists
-    const listSelector = document.getElementById('listSelector');
-    fetch(`/api/lists`)
-        .then(response => response.json())
-        .then(data => {
-            data.forEach(list => {
-                const option = document.createElement('option');
-                option.value = list;
-                option.text = list;
-                listSelector.appendChild(option);
-            });
-        });
-});
+// Base URL for the API
+const apiUrl = 'http://localhost:3000/api';
 
-function createList() {
-    const newListName = document.getElementById('newListName').value;
-    if (newListName) {
-        fetch(`/api/lists/${newListName}`, { method: 'POST' })
-            .then(response => {
-                if (response.status === 201) {
-                    alert('List created successfully');
-                } else if (response.status === 400) {
-                    alert('List name already exists');
-                }
-            });
-    }
+// Function to create a new list
+async function createList() {
+    const listName = document.getElementById('newListName').value;
+    const response = await fetch(`${apiUrl}/superhero-lists`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ listName: listName })
+    });
+    const data = await response.json();
+    alert(data.message);
 }
 
-function saveSuperheroIds() {
-    const listName = document.getElementById('listSelector').value;
-    const superheroIds = document.getElementById('superheroIds').value;
-    if (listName && superheroIds) {
-        const requestBody = { superheroIds: superheroIds.split(',').map(id => id.trim()) };
-        fetch(`/api/lists/${listName}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(requestBody)
-        })
-            .then(response => {
-                if (response.status === 200) {
-                    alert('Superhero IDs saved successfully');
-                } else if (response.status === 404) {
-                    alert('List does not exist');
-                }
-            });
-    }
+// Function to add superhero IDs to an existing list
+async function addSuperheroesToList() {
+    const listName = document.getElementById('existingListName').value;
+    const ids = document.getElementById('superheroIds').value.split(',').map(Number);
+    const response = await fetch(`${apiUrl}/superhero-lists/${listName}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ superheroIds: ids })
+    });
+    const data = await response.json();
+    alert(data.message);
 }
 
-function getSuperheroIds() {
-    const listName = document.getElementById('listSelector').value;
-    if (listName) {
-        fetch(`/api/lists/${listName}`)
-            .then(response => {
-                if (response.status === 200) {
-                    return response.json();
-                } else if (response.status === 404) {
-                    alert('List does not exist');
-                    return null;
-                }
-            })
-            .then(data => {
-                if (data) {
-                    const superheroIds = data.superheroIds.join(', ');
-                    alert(`Superhero IDs in the list: ${superheroIds}`);
-                }
-            });
-    }
+// Function to get the details of a list
+async function getListDetails() {
+    const listName = document.getElementById('manageListName').value;
+    const response = await fetch(`${apiUrl}/superhero-lists/${listName}/details`);
+    const data = await response.json();
+    const detailsElement = document.getElementById('listDetails');
+    detailsElement.textContent = JSON.stringify(data, null, 2);
 }
 
-function deleteList() {
-    const listName = document.getElementById('listSelector').value;
-    if (listName) {
-        fetch(`/api/lists/${listName}`, { method: 'DELETE' })
-            .then(response => {
-                if (response.status === 204) {
-                    alert('List deleted successfully');
-                    // Remove the deleted list from the dropdown
-                    const listSelector = document.getElementById('listSelector');
-                    const optionToRemove = Array.from(listSelector.options).find(option => option.value === listName);
-                    if (optionToRemove) {
-                        listSelector.removeChild(optionToRemove);
-                    }
-                } else if (response.status === 404) {
-                    alert('List does not exist');
-                }
-            });
-    }
+// Function to delete a list
+async function deleteList() {
+    const listName = document.getElementById('manageListName').value;
+    const response = await fetch(`${apiUrl}/superhero-lists/${listName}`, {
+        method: 'DELETE'
+    });
+    const data = await response.json();
+    alert(data.message);
 }
+
+

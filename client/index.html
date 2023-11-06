@@ -45,23 +45,32 @@
         <div id="searchResult"></div>
     </div>
 
-    <h1>Superhero Lists</h1>
+    <h1>Superhero List Manager</h1>
 
-    <h2>Create a New List</h2>
-    <input type="text" id="newListName" placeholder="List Name">
-    <button onclick="createList()">Create</button>
-
-    <h2>Manage Superhero Lists</h2>
-    <select id="listSelector">
-        <option value="">Select a List</option>
-    </select>
-    <input type="text" id="superheroIds" placeholder="Superhero IDs (comma-separated)">
-    <button onclick="saveSuperheroIds()">Save Superhero IDs</button>
-    <button onclick="getSuperheroIds()">Get Superhero IDs</button>
-    <button onclick="deleteList()">Delete List</button>
-
-    <h2>Superheroes in Selected List</h2>
-    <div id="superheroesList"></div>
+    <section>
+        <h2>Create a New List</h2>
+        <input type="text" id="newListName" placeholder="Enter list name">
+        <button onclick="createList()">Create List</button>
+    </section>
+    
+    <section>
+        <h2>Add Superhero IDs to a List</h2>
+        <input type="text" id="existingListName" placeholder="Enter existing list name">
+        <input type="text" id="superheroIds" placeholder="Enter superhero IDs (comma-separated)">
+        <button onclick="addSuperheroesToList()">Add to List</button>
+    </section>
+    
+    <section>
+        <h2>Manage Existing Lists</h2>
+        <input type="text" id="manageListName" placeholder="Enter list name">
+        <button onclick="getListDetails()">Get List Details</button>
+        <button onclick="deleteList()">Delete List</button>
+    </section>
+    
+    <section>
+        <h2>List Details</h2>
+        <div id="listDetails"></div>
+    </section>
 
     <script src="script.js"></script>
 </body>

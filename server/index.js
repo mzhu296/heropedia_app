@@ -4,14 +4,12 @@ const port = 3000;
 
 //this method will Load superhero data from JSON files
 const path = require('path');
-const fs = require('fs');
 const superheroInfo = require('./superhero_info.json');
 const superheroPowers = require('./superhero_powers.json');
 const mainDir = path.join(__dirname, '../');
 const clientDir = path.join(__dirname, '../client');
 app.use(express.static(mainDir));
 app.use(express.static(clientDir));
-app.use(express.json());
 
 //this method will get superhero information by ID
 app.get('/api/superheroes/:id', (req, res) => {
@@ -68,97 +66,101 @@ app.get('/api/search-superheroes', (req, res) => {
     res.json(matches);
 });
 
-const dataFilePath = 'superhero_lists.json';
+// This object will act as an in-memory storage for superhero lists
+let superheroLists = {};
 
-// Load superhero data from the JSON file
-function loadSuperheroData() {
-  try {
-    const data = fs.readFileSync(dataFilePath, 'utf-8');
-    return JSON.parse(data);
-  } catch (error) {
-    return {};
-  }
-}
+// Endpoint to create a new superhero list
+app.post('/api/superhero-lists', express.json(), (req, res) => {
+    const listName = req.body.listName;
 
-// Save superhero data to the JSON file
-function saveSuperheroData(data) {
-  fs.writeFileSync(dataFilePath, JSON.stringify(data, null, 2), 'utf-8');
-}
+    // Check if the list name already exists
+    if (superheroLists.hasOwnProperty(listName)) {
+        // If the list name exists, return an error response
+        res.status(409).json({ error: 'List name already exists' });
+    } else {
+        // If the list name does not exist, create it with an empty array
+        superheroLists[listName] = [];
 
-// Create a new list of superheroes
-app.post('/api/lists/:listName', (req, res) => {
-  const listName = req.params.listName;
-  const superheroData = loadSuperheroData();
-
-  if (superheroData.hasOwnProperty(listName)) {
-    res.status(400).json({ error: 'List name already exists' });
-  } else {
-    superheroData[listName] = [];
-    saveSuperheroData(superheroData);
-    res.sendStatus(201);
-  }
+        // Return a success response
+        res.status(201).json({ message: 'List created successfully', listName: listName });
+    }
 });
 
-// Save a list of superhero IDs to a given list name
-app.put('/api/lists/:listName', (req, res) => {
-  const listName = req.params.listName;
-  const superheroIds = req.body.superheroIds;
-  const superheroData = loadSuperheroData();
+app.post('/api/superhero-lists/:listName', express.json(), (req, res) => {
+    const listName = req.params.listName;
+    const superheroIds = req.body.superheroIds;
 
-  if (!superheroData.hasOwnProperty(listName)) {
-    res.status(404).json({ error: 'List does not exist' });
-  } else {
-    superheroData[listName] = superheroIds;
-    saveSuperheroData(superheroData);
-    res.sendStatus(200);
-  }
-});
+    // Check if the list name exists
+    if (!superheroLists.hasOwnProperty(listName)) {
+        // If the list name does not exist, return an error response
+        res.status(404).json({ error: 'List name does not exist' });
+    } else {
+        // If the list name exists, replace its contents with the new superhero IDs
+        superheroLists[listName] = superheroIds;
 
-// Get the list of superhero IDs for a given list
-app.get('/api/lists/:listName', (req, res) => {
-  const listName = req.params.listName;
-  const superheroData = loadSuperheroData();
-
-  if (!superheroData.hasOwnProperty(listName)) {
-    res.status(404).json({ error: 'List does not exist' });
-  } else {
-    const superheroIds = superheroData[listName];
-    res.json({ superheroIds });
-  }
-});
-
-// Delete a list of superheroes with a given name
-app.delete('/api/lists/:listName', (req, res) => {
-  const listName = req.params.listName;
-  const superheroData = loadSuperheroData();
-
-  if (!superheroData.hasOwnProperty(listName)) {
-    res.status(404).json({ error: 'List does not exist' });
-  } else {
-    delete superheroData[listName];
-    saveSuperheroData(superheroData);
-    res.sendStatus(204);
-  }
-});
-
-// Get a list of names, information, and powers of all superheroes saved in a given list
-app.get('/api/lists/:listName/superheroes', (req, res) => {
-  const listName = req.params.listName;
-  const superheroData = loadSuperheroData();
-
-  if (!superheroData.hasOwnProperty(listName)) {
-    res.status(404).json({ error: 'List does not exist' });
-  } else {
-    // You can retrieve superhero details from another data source and filter based on superhero IDs in the list.
-    const superheroIds = superheroData[listName];
-    // Sample response - Replace with actual data retrieval
-    const superheroes = superheroDetails.filter((hero) => superheroIds.includes(hero.id));
-    res.json({ superheroes });
-  }
+        // Return a success response
+        res.status(200).json({ message: 'List updated successfully', listName: listName });
+    }
 });
 
 app.get('/', (req, res) => {
     res.sendFile('index.html', { root: clientDir });
+});
+
+app.get('/api/superhero-lists/:listName', (req, res) => {
+    const listName = req.params.listName;
+
+    // Check if the list name exists
+    if (!superheroLists.hasOwnProperty(listName)) {
+        res.status(404).json({ error: 'List not found' });
+    } else {
+        res.status(200).json(superheroLists[listName]);
+    }
+});
+
+app.delete('/api/superhero-lists/:listName', (req, res) => {
+    const listName = req.params.listName;
+
+    // Check if the list name exists
+    if (!superheroLists.hasOwnProperty(listName)) {
+        res.status(404).json({ error: 'List not found' });
+    } else {
+        // If the list name exists, delete it
+        delete superheroLists[listName];
+
+        // Return a success response
+        res.status(200).json({ message: 'List deleted successfully' });
+    }
+});
+
+app.get('/api/superhero-lists/:listName/details', (req, res) => {
+    const listName = req.params.listName;
+
+    // Check if the list name exists
+    if (!superheroLists.hasOwnProperty(listName)) {
+        res.status(404).json({ error: 'List not found' });
+    } else {
+        // Get the list of superhero IDs
+        const superheroIds = superheroLists[listName];
+
+        // Map IDs to superhero details
+        const superheroDetails = superheroIds.map(id => {
+            const superhero = superheroInfo.find(hero => hero.id === id);
+            if (superhero) {
+                const powers = superheroPowers.find(power => power.hero_names.toLowerCase() === superhero.name.toLowerCase());
+                return {
+                    id: superhero.id,
+                    name: superhero.name,
+                    info: superhero,
+                    powers: powers ? Object.keys(powers).filter(power => powers[power] === 'True') : []
+                };
+            }
+            return null;
+        }).filter(Boolean); // Filter out any null values if a superhero wasn't found
+
+        // Return a list of superhero details
+        res.status(200).json(superheroDetails);
+    }
 });
 
 // Start the Express server
