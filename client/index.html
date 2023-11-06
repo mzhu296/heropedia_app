@@ -1,0 +1,31 @@
+<!-- index.html -->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Superhero Search</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Superhero Search</h1>
+    <div>
+        <label for="searchField">Search by:</label>
+        <select id="searchField">
+            <option value="name">Name</option>
+            <option value="race">Race</option>
+            <option value="publisher">Publisher</option>
+            <option value="power">Power</option>
+        </select>
+        <input type="text" id="searchInput" placeholder="Enter search term">
+        <button onclick="searchSuperheroes()">Search</button>
+    </div>
+
+    <h2>Search Results</h2>
+    <div id="searchResults"></div>
+
+    <h2>Favorite Lists</h2>
+    <ul id="favoriteLists"></ul>
+
+    <script src="scripts.js"></script>
+</body>
+</html>

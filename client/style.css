@@ -1,0 +1,19 @@
+/* styles.css */
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+}
+
+h1, h2 {
+    text-align: center;
+}
+
+div {
+    margin: 10px;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+}
