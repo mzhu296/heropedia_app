@@ -6,7 +6,6 @@ const port = 3000;
 const path = require('path');
 const superheroInfo = require('/Users/benjaminzhu/Documents/GitHub/se3316-mzhu296-lab3/server/superhero_info.json');
 const superheroPowers = require('/Users/benjaminzhu/Documents/GitHub/se3316-mzhu296-lab3/server/superhero_powers.json');
-
 const mainDir = path.join(__dirname, '../');
 const clientDir = path.join(__dirname, '../client');
 app.use(express.static(mainDir));
@@ -45,31 +44,34 @@ app.get('/api/publishers', (req, res) => {
 });
 
 //this method will search for superheroes by a specific field and pattern
+// Search superheroes by name, race, publisher, or power
 app.get('/api/search-superheroes', (req, res) => {
-    const field = req.query.field; // Get the field parameter from the query string
-    const pattern = req.query.pattern; // Get the pattern parameter from the query string
-    const n = parseInt(req.query.n); // Get the 'n' parameter from the query string
+    const field = req.query.field;
+    const pattern = req.query.pattern; 
 
-    if (!field || !pattern) {
-        return res.status(400).json({ error: 'Both field and pattern are required.' });
-    }
+    let matches = [];
 
-    const matches = superheroInfo.filter(hero => {
-        // Use a case-insensitive regular expression to match the pattern in the specified field
-        const regex = new RegExp(pattern, 'i');
-        return regex.test(hero[field]);
-    });
+    if (field === 'name') {
+        matches = superheroInfo.filter(hero => hero.name.toLowerCase().includes(pattern.toLowerCase()));
+    } else if (field === 'race') {
+        matches = superheroInfo.filter(hero => hero.Race.toLowerCase().includes(pattern.toLowerCase()));
+    } else if (field === 'publisher') {
+        matches = superheroInfo.filter(hero => hero.Publisher.toLowerCase().includes(pattern.toLowerCase()));
+    } else if (field === 'power') {
+        const heroesWithPower = superheroPowers.filter(hero => hero[pattern] === 'True');
+        const heroesWithPowerNames = heroesWithPower.map(hero => hero.hero_names);
+    
+        matches = superheroInfo.filter(hero => heroesWithPowerNames.includes(hero.name));
+    }    
 
-    if (n) {
-        res.json(matches.slice(0, n)); // Return the first 'n' matches
-    } else {
-        res.json(matches); // Return all matches
-    }
+    res.json(matches);
 });
 
 // this method will create a new superhero list with a given name
+let superheroLists = {}; // Object to store superhero lists
+
 app.post('/api/create-superhero-list', (req, res) => {
-    const listName = req.body.name; // Get the list name from the request body
+    const listName = req.body.name;
 
     if (!listName) {
         return res.status(400).json({ error: 'List name is required.' });
@@ -81,6 +83,43 @@ app.post('/api/create-superhero-list', (req, res) => {
 
     superheroLists[listName] = []; // Create an empty list with the provided name
     res.status(201).json({ message: 'Superhero list created successfully.' });
+});
+
+// this method will save a list of superhero IDs to a given list name
+app.put('/api/save-superhero-ids/:listName', (req, res) => {
+    const listName = req.params.listName;
+    const superheroIDs = req.body.ids; // Assuming you send the superhero IDs in the request body
+
+    if (!superheroLists[listName]) {
+        return res.status(404).json({ error: 'List name does not exist.' });
+    }
+
+    superheroLists[listName] = superheroIDs; // Replace existing superhero IDs with new ones
+    res.status(200).json({ message: 'Superhero IDs saved successfully.' });
+});
+
+// this method will get the list of superhero IDs for a given list
+app.get('/api/get-superhero-ids/:listName', (req, res) => {
+    const listName = req.params.listName;
+
+    if (!superheroLists[listName]) {
+        return res.status(404).json({ error: 'List name does not exist.' });
+    }
+
+    const superheroIDs = superheroLists[listName];
+    res.status(200).json({ listName, superheroIDs });
+});
+
+// this method will delete a superhero list with a given name
+app.delete('/api/delete-superhero-list/:listName', (req, res) => {
+    const listName = req.params.listName;
+
+    if (!superheroLists[listName]) {
+        return res.status(404).json({ error: 'List name does not exist.' });
+    }
+
+    delete superheroLists[listName];
+    res.status(200).json({ message: 'Superhero list deleted successfully.' });
 });
 
 app.get('/', (req, res) => {
