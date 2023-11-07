@@ -10,59 +10,58 @@ document.addEventListener('DOMContentLoaded', function () {
     searchButton.addEventListener('click', searchSuperheroes);
 });
 
-function fetchAndDisplayData(url, resultElementId) {
-    fetch(url)
-        .then(response => response.json())
-        .then(data => {
-            const resultElement = document.getElementById(resultElementId);
-            resultElement.textContent = JSON.stringify(data, null, 2);
-        })
-        .catch(error => {
-            const resultElement = document.getElementById(resultElementId);
-            resultElement.textContent = `Error: ${error.message}`;
-        });
+async function fetchAndDisplayData(url, resultElementId) {
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+        const resultElement = document.getElementById(resultElementId);
+        resultElement.textContent = JSON.stringify(data, null, 2);
+    } catch (error) {
+        const resultElement = document.getElementById(resultElementId);
+        resultElement.textContent = `Error: ${error.message}`;
+    }
 }
 
-function getSuperheroInfo() {
+async function getSuperheroInfo() {
     const heroId = document.getElementById('heroId').value.trim();
-    if (!heroId || heroId<0) {
+    if (!heroId || heroId < 0) {
         displayError('infoResult', 'Please enter a valid numeric Superhero ID.');
         return;
     }
     const url = `/api/superheroes/${heroId}`;
-    fetchAndDisplayData(url, 'infoResult');
+    await fetchAndDisplayData(url, 'infoResult');
 }
 
-function getSuperheroPowers() {
+async function getSuperheroPowers() {
     const powersId = document.getElementById('powersId').value.trim();
-    if (!powersId || heroId<0) {
+    // This should likely be powersId instead of heroId in the condition.
+    if (!powersId || powersId < 0) {
         displayError('powersResult', 'Please enter a valid numeric Superhero ID.');
         return;
     }
     const url = `/api/superheroes/${powersId}/powers`;
-    fetchAndDisplayData(url, 'powersResult');
+    await fetchAndDisplayData(url, 'powersResult');
 }
 
-function getPublishers() {
+async function getPublishers() {
     const url = '/api/publishers';
-    fetchAndDisplayData(url, 'publishersResult');
+    await fetchAndDisplayData(url, 'publishersResult');
 }
 
-function searchSuperheroes() {
+async function searchSuperheroes() {
     const searchField = document.getElementById('searchField').value;
     const searchPattern = document.getElementById('searchPattern').value;
     const resultLimit = parseInt(document.getElementById('resultLimit').value);
     const url = `/api/search-superheroes?field=${searchField}&pattern=${searchPattern}`;
 
-    fetch(url)
-        .then(response => response.json())
-        .then(data => {
-            const limitedResults = data.slice(0, resultLimit); // Limit the results
-            displaySearchResults(limitedResults);
-        })
-        .catch(error => {
-            console.error('Search error:', error);
-        });
+    try {
+        const response = await fetch(url);
+        let data = await response.json();
+        const limitedResults = data.slice(0, resultLimit); // Limit the results
+        displaySearchResults(limitedResults);
+    } catch (error) {
+        console.error('Search error:', error);
+    }
 }
 
 function displaySearchResults(results) {
@@ -107,16 +106,21 @@ document.getElementById('sortBy').addEventListener('change', () => {
     displaySearchResults(searchResults);
 });
 
+function displayMessage(message) {
+    const messageElement = document.getElementById('messageArea');
+    messageElement.textContent = message;
+}
+
 // Function to create a new list
 async function createList() {
     const listName = document.getElementById('newListName').value;
     const response = await fetch(`/api/superhero-lists`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json; charset=UTF-8'  },
         body: JSON.stringify({ listName: listName })
     });
     const data = await response.json();
-    alert(data.message);
+    displayMessage(data.message);
 }
 
 // Function to add superhero IDs to an existing list
@@ -125,11 +129,11 @@ async function addSuperheroesToList() {
     const ids = document.getElementById('superheroIds').value.split(',').map(Number);
     const response = await fetch(`/api/superhero-lists/${listName}`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json; charset=UTF-8' },
         body: JSON.stringify({ superheroIds: ids })
     });
     const data = await response.json();
-    alert(data.message);
+    displayMessage(data.message);
 }
 
 // Function to get the details of a list
@@ -148,7 +152,7 @@ async function deleteList() {
         method: 'DELETE'
     });
     const data = await response.json();
-    alert(data.message);
+    displayMessage(data.message);
 }
 
 

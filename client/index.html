@@ -2,31 +2,36 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Superhero Dashboard</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Superhero web app</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <h2>Get Superhero Info</h2>
-        <input type="number" id="heroId" placeholder="Enter Superhero ID">
-        <button id="getInfoButton">Get Info</button>
-        <pre id="infoResult"></pre>
+    <header>
+        <h1>Superhero web app</h1>
+    </header>
+    <div class="top-row">
+        <div class="container">
+            <h2>Get Superhero Info</h2>
+            <input type="number" id="heroId" placeholder="Enter Superhero ID">
+            <button id="getInfoButton">Get Info</button>
+            <pre id="infoResult"></pre>
+        </div>
+
+        <div class="container">
+            <h2>Get Superhero Powers</h2>
+            <input type="number" id="powersId" placeholder="Enter Superhero ID">
+            <button id="getPowersButton">Get Powers</button>
+            <pre id="powersResult"></pre>
+        </div>
+
+        <div class="container">
+            <h2>Get Publishers</h2>
+            <button id="getPublishersButton">Show Publishers</button>
+            <pre id="publishersResult"></pre>
+        </div>
     </div>
 
-    <div class="container">
-        <h2>Get Superhero Powers</h2>
-        <input type="number" id="powersId" placeholder="Enter Superhero ID">
-        <button id="getPowersButton">Get Powers</button>
-        <pre id="powersResult"></pre>
-    </div>
-
-    <div class="container">
-        <h2>Get Publishers</h2>
-        <button id="getPublishersButton">Show Publishers</button>
-        <pre id="publishersResult"></pre>
-    </div>
-
-    <div class="container">
+    <div class="container2">
         <h2>Search Superheroes</h2>
          <label for="searchField">Search Field:</label>
         <select id="searchField">
@@ -44,24 +49,27 @@
         <div id="searchResult"></div>
     </div>
 
-    <div class="container">
-        <h2>Create Superhero List</h2>
-        <input type="text" id="newListName" placeholder="Enter New List Name">
-        <button onclick="createList()">Create List</button>
+    <div class="bottom-row">
+        <div class="container">
+            <h2>Create Superhero List</h2>
+            <input type="text" id="newListName" placeholder="Enter New List Name">
+            <button onclick="createList()">Create List</button>
+        </div>
+    
+        <div class="container">
+            <h2>Add Superheroes to List</h2>
+            <input type="text" id="existingListName" placeholder="Enter Existing List Name">
+            <input type="text" id="superheroIds" placeholder="Enter Superhero IDs comma-separated">
+            <button onclick="addSuperheroesToList()">Add to List</button>
+        </div>
     </div>
 
-    <div class="container">
-        <h2>Add Superheroes to List</h2>
-        <input type="text" id="existingListName" placeholder="Enter Existing List Name">
-        <input type="text" id="superheroIds" placeholder="Enter Superhero IDs comma-separated">
-        <button onclick="addSuperheroesToList()">Add to List</button>
-    </div>
-
-    <div class="container">
+    <div class="container2">
         <h2>Manage List</h2>
         <input type="text" id="manageListName" placeholder="Enter List Name">
         <button onclick="getListDetails()">Get List Details</button>
         <button onclick="deleteList()">Delete List</button>
+        <div id="messageArea"></div>
         <pre id="listDetails"></pre>
     </div>
 
