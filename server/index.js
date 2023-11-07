@@ -131,10 +131,6 @@ app.post('/api/superhero-lists/:listName', express.json(), (req, res) => {
     }
 });
 
-app.get('/', (req, res) => {
-    res.sendFile('index.html', { root: clientDir });
-});
-
 app.get('/api/superhero-lists/:listName', (req, res) => {
     const listName = req.params.listName;
 

@@ -12,14 +12,14 @@
     <div class="top-row">
         <div class="container">
             <h2>Get Superhero Info</h2>
-            <input type="number" id="heroId" placeholder="Enter Superhero ID">
+            <input type="text" id="heroId" placeholder="Enter Superhero ID">
             <button id="getInfoButton">Get Info</button>
             <pre id="infoResult"></pre>
         </div>
 
         <div class="container">
             <h2>Get Superhero Powers</h2>
-            <input type="number" id="powersId" placeholder="Enter Superhero ID">
+            <input type="text" id="powersId" placeholder="Enter Superhero ID">
             <button id="getPowersButton">Get Powers</button>
             <pre id="powersResult"></pre>
         </div>
@@ -67,9 +67,9 @@
     <div class="container2">
         <h2>Manage List</h2>
         <input type="text" id="manageListName" placeholder="Enter List Name">
+        <button onclick="getList()">Get List Details</button>
         <button onclick="getListDetails()">Get List Details</button>
         <button onclick="deleteList()">Delete List</button>
-        <div id="messageArea"></div>
         <pre id="listDetails"></pre>
     </div>
 

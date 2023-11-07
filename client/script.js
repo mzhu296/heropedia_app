@@ -24,21 +24,12 @@ async function fetchAndDisplayData(url, resultElementId) {
 
 async function getSuperheroInfo() {
     const heroId = document.getElementById('heroId').value.trim();
-    if (!heroId || heroId < 0) {
-        displayError('infoResult', 'Please enter a valid numeric Superhero ID.');
-        return;
-    }
     const url = `/api/superheroes/${heroId}`;
     await fetchAndDisplayData(url, 'infoResult');
 }
 
 async function getSuperheroPowers() {
     const powersId = document.getElementById('powersId').value.trim();
-    // This should likely be powersId instead of heroId in the condition.
-    if (!powersId || powersId < 0) {
-        displayError('powersResult', 'Please enter a valid numeric Superhero ID.');
-        return;
-    }
     const url = `/api/superheroes/${powersId}/powers`;
     await fetchAndDisplayData(url, 'powersResult');
 }
@@ -106,11 +97,6 @@ document.getElementById('sortBy').addEventListener('change', () => {
     displaySearchResults(searchResults);
 });
 
-function displayMessage(message) {
-    const messageElement = document.getElementById('messageArea');
-    messageElement.textContent = message;
-}
-
 // Function to create a new list
 async function createList() {
     const listName = document.getElementById('newListName').value;
@@ -120,7 +106,8 @@ async function createList() {
         body: JSON.stringify({ listName: listName })
     });
     const data = await response.json();
-    displayMessage(data.message);
+    const detailsElement = document.getElementById('listDetails');
+    detailsElement.textContent = JSON.stringify(data, null, 2);
 }
 
 // Function to add superhero IDs to an existing list
@@ -133,7 +120,19 @@ async function addSuperheroesToList() {
         body: JSON.stringify({ superheroIds: ids })
     });
     const data = await response.json();
-    displayMessage(data.message);
+    const detailsElement = document.getElementById('listDetails');
+    detailsElement.textContent = JSON.stringify(data, null, 2);
+}
+
+// Function to get a list
+async function getList() {
+    const listName = document.getElementById('manageListName').value;
+    const response = await fetch(`/api/superhero-lists/${listName}`, {
+        method: 'GET'
+    });
+    const data = await response.json();
+    const detailsElement = document.getElementById('listDetails');
+    detailsElement.textContent = JSON.stringify(data, null, 2);
 }
 
 // Function to get the details of a list
@@ -152,7 +151,8 @@ async function deleteList() {
         method: 'DELETE'
     });
     const data = await response.json();
-    displayMessage(data.message);
+    const detailsElement = document.getElementById('listDetails');
+    detailsElement.textContent = JSON.stringify(data, null, 2);
 }
 
 
