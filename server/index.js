@@ -11,10 +11,21 @@ const clientDir = path.join(__dirname, '../client');
 app.use(express.static(mainDir));
 app.use(express.static(clientDir));
 
-//this method will get superhero information by ID
+// Function to get superhero information by ID
+function getSuperheroInfoById(superheroId) {
+    return superheroInfo.find(hero => hero.id === superheroId);
+}
+
+// Function to get superhero powers by ID
+function getSuperheroPowersById(superhero) {
+    const superheroPower = superheroPowers.find((hero) => hero.hero_names.toLowerCase() === superhero.name.toLowerCase());
+    return superheroPower ? Object.keys(superheroPower).filter(power => superheroPower[power] === 'True') : [];
+}
+
+// Route to get superhero information by ID
 app.get('/api/superheroes/:id', (req, res) => {
-    const superheroId = parseInt(req.params.id); // Parse the ID to an integer
-    const superhero = superheroInfo.find(hero => hero.id === superheroId);
+    const superheroId = parseInt(req.params.id);
+    const superhero = getSuperheroInfoById(superheroId);
 
     if (superhero) {
         res.json(superhero);
@@ -23,17 +34,16 @@ app.get('/api/superheroes/:id', (req, res) => {
     }
 });
 
-//this method will get superhero powers by ID
+// Route to get superhero powers by ID
 app.get('/api/superheroes/:id/powers', (req, res) => {
-    const superheroId = parseInt(req.params.id); // Parse the ID to an integer
-    const superhero = superheroInfo.find(hero => hero.id === superheroId);
-    const superheroPower = superheroPowers.find((hero) => hero.hero_names.toLowerCase() === superhero.name.toLowerCase());
-    const powers = Object.keys(superheroPower).filter(power => superheroPower[power] === 'True');
+    const superheroId = parseInt(req.params.id);
+    const superhero = getSuperheroInfoById(superheroId);
 
-    if (powers) {
+    if (superhero) {
+        const powers = getSuperheroPowersById(superhero);
         res.json(powers);
     } else {
-        res.status(404).json({ error: 'Powers not found' });
+        res.status(404).json({ error: 'Superhero not found' });
     }
 });
 
@@ -44,25 +54,43 @@ app.get('/api/publishers', (req, res) => {
 });
 
 //this method will search for superheroes by a specific field and pattern
-// Search superheroes by name, race, publisher, or power
 app.get('/api/search-superheroes', (req, res) => {
     const field = req.query.field;
-    const pattern = req.query.pattern; 
+    const pattern = req.query.pattern;
 
     let matches = [];
 
     if (field === 'name') {
-        matches = superheroInfo.filter(hero => hero.name.toLowerCase().includes(pattern.toLowerCase()));
-    } else if (field === 'race') {
-        matches = superheroInfo.filter(hero => hero.Race.toLowerCase().includes(pattern.toLowerCase()));
-    } else if (field === 'publisher') {
-        matches = superheroInfo.filter(hero => hero.Publisher.toLowerCase().includes(pattern.toLowerCase()));
+        matches = superheroInfo
+            .filter(hero => hero.name.toLowerCase().includes(pattern.toLowerCase()))
+            .map(match => ({
+                id: match.id,
+                name: match.name,
+                info: match,
+                powers: superheroPowers.find(power => power.hero_names.toLowerCase() === match.name.toLowerCase())
+            }));
+    } else if (field === 'Info') {
+        matches = superheroInfo
+            .filter(hero => hero.Info.toLowerCase().includes(pattern.toLowerCase()))
+            .map(match => ({
+                id: match.id,
+                name: match.name,
+                info: match,
+                powers: superheroPowers.find(power => power.hero_names.toLowerCase() === match.name.toLowerCase())
+            }));
     } else if (field === 'power') {
-        const heroesWithPower = superheroPowers.filter(hero => hero[pattern] === 'True');
-        const heroesWithPowerNames = heroesWithPower.map(hero => hero.hero_names);
-        matches = superheroInfo.filter(hero => heroesWithPowerNames.includes(hero.name));
-    }    
-
+        matches = superheroPowers
+            .filter(hero => hero[pattern] === 'True')
+            .map(powerMatch => {
+                let match = superheroInfo.find(hero => hero.name.toLowerCase() === powerMatch.hero_names.toLowerCase());
+                return match ? {
+                    id: match.id,
+                    name: match.name,
+                    info: match,
+                    powers: Object.keys(powerMatch).filter(power => powerMatch[power] === 'True')
+                } : null;
+            }).filter(Boolean); // This will remove any null values if a match was not found in superheroInfo
+    }
     res.json(matches);
 });
 
@@ -156,7 +184,7 @@ app.get('/api/superhero-lists/:listName/details', (req, res) => {
                 };
             }
             return null;
-        }).filter(Boolean); // Filter out any null values if a superhero wasn't found
+        }).filter(Boolean); 
 
         // Return a list of superhero details
         res.status(200).json(superheroDetails);

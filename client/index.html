@@ -2,35 +2,33 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Superhero web app</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Superhero Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>Superhero Information</h1>
-
-    <div>
-        <label for="heroId">Superhero ID:</label>
-        <input type="text" id="heroId">
-        <button id="getInfoButton">Get Superhero Info</button>
+    <div class="container">
+        <h2>Get Superhero Info</h2>
+        <input type="number" id="heroId" placeholder="Enter Superhero ID">
+        <button id="getInfoButton">Get Info</button>
         <pre id="infoResult"></pre>
     </div>
 
-    <div>
-        <label for="powersId">Superhero ID:</label>
-        <input type="text" id="powersId">
-        <button id="getPowersButton">Get Superhero Powers</button>
+    <div class="container">
+        <h2>Get Superhero Powers</h2>
+        <input type="number" id="powersId" placeholder="Enter Superhero ID">
+        <button id="getPowersButton">Get Powers</button>
         <pre id="powersResult"></pre>
     </div>
 
-    <div>
-        <button id="getPublishersButton">Get Publishers</button>
+    <div class="container">
+        <h2>Get Publishers</h2>
+        <button id="getPublishersButton">Show Publishers</button>
         <pre id="publishersResult"></pre>
     </div>
 
-    <h2>Search Superheroes</h2>
-    <div>
-        <label for="searchField">Search Field:</label>
+    <div class="container">
+        <h2>Search Superheroes</h2>
+         <label for="searchField">Search Field:</label>
         <select id="searchField">
             <option value="name">Name</option>
             <option value="race">Race</option>
@@ -41,37 +39,33 @@
         <input type="text" id="searchPattern">
         <label for="resultLimit">Result Limit:</label>
         <input type="number" id="resultLimit">
+        <input type="text" id="sortBy" placeholder="Type attribute to sort by" />
         <button id="searchButton">Search</button>
         <div id="searchResult"></div>
     </div>
 
-    <h1>Superhero List Manager</h1>
-
-    <section>
-        <h2>Create a New List</h2>
-        <input type="text" id="newListName" placeholder="Enter list name">
+    <div class="container">
+        <h2>Create Superhero List</h2>
+        <input type="text" id="newListName" placeholder="Enter New List Name">
         <button onclick="createList()">Create List</button>
-    </section>
-    
-    <section>
-        <h2>Add Superhero IDs to a List</h2>
-        <input type="text" id="existingListName" placeholder="Enter existing list name">
-        <input type="text" id="superheroIds" placeholder="Enter superhero IDs (comma-separated)">
+    </div>
+
+    <div class="container">
+        <h2>Add Superheroes to List</h2>
+        <input type="text" id="existingListName" placeholder="Enter Existing List Name">
+        <input type="text" id="superheroIds" placeholder="Enter Superhero IDs comma-separated">
         <button onclick="addSuperheroesToList()">Add to List</button>
-    </section>
-    
-    <section>
-        <h2>Manage Existing Lists</h2>
-        <input type="text" id="manageListName" placeholder="Enter list name">
+    </div>
+
+    <div class="container">
+        <h2>Manage List</h2>
+        <input type="text" id="manageListName" placeholder="Enter List Name">
         <button onclick="getListDetails()">Get List Details</button>
         <button onclick="deleteList()">Delete List</button>
-    </section>
-    
-    <section>
-        <h2>List Details</h2>
-        <div id="listDetails"></div>
-    </section>
+        <pre id="listDetails"></pre>
+    </div>
 
     <script src="script.js"></script>
 </body>
 </html>
+
