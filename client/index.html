@@ -44,7 +44,20 @@
         <input type="text" id="searchPattern">
         <label for="resultLimit">Result Limit:</label>
         <input type="number" id="resultLimit">
-        <input type="text" id="sortBy" placeholder="Type attribute to sort by" />
+        <select id="sortBy">
+            <option value="id">id</option>
+            <option value="Name">Name</option>
+            <option value="Gender">Gender</option>
+            <option value="Eye color">Eye color</option>
+            <option value="Race">Race</option>
+            <option value="Hair color">Hair color</option>
+            <option value="Height">Height</option>
+            <option value="Publisher">Publisher</option>
+            <option value="Skin color">Skin color</option>
+            <option value="Alignment">Alignment</option>
+            <option value="Weight">Weight</option>
+            <option value="Power">Power</option>
+        </select>
         <button id="searchButton">Search</button>
         <div id="searchResult"></div>
     </div>
@@ -67,7 +80,20 @@
     <div class="container2">
         <h2>Manage List</h2>
         <input type="text" id="manageListName" placeholder="Enter List Name">
-        <input type="text" id="sortAttribute" placeholder="Enter Attribute to Sort By">
+        <select id="sortAttribute">
+            <option value="id">id</option>
+            <option value="Name">Name</option>
+            <option value="Gender">Gender</option>
+            <option value="Eye color">Eye color</option>
+            <option value="Race">Race</option>
+            <option value="Hair color">Hair color</option>
+            <option value="Height">Height</option>
+            <option value="Publisher">Publisher</option>
+            <option value="Skin color">Skin color</option>
+            <option value="Alignment">Alignment</option>
+            <option value="Weight">Weight</option>
+            <option value="Power">Power</option>
+        </select>
         <button onclick="getListDetails()">Get List Details</button>
         <button onclick="deleteList()">Delete List</button>
         <pre id="listDetails"></pre>

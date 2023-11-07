@@ -48,7 +48,7 @@ async function searchSuperheroes() {
     try {
         const response = await fetch(url);
         let data = await response.json();
-        const limitedResults = data.slice(0, resultLimit);
+        const limitedResults = data.slice(0, resultLimit); // Limit the results
         displaySearchResults(limitedResults);
     } catch (error) {
         console.error('Search error:', error);
@@ -63,12 +63,7 @@ function displaySearchResults(results) {
     if (results.length === 0) {
         searchResultElement.textContent = 'No results found.';
     } 
-    for (let i = 0; i < results.length; i++) {
-        results[i].info["Power"] = countTruePowers(results[i].powers); 
-    }
-    if (sortBy) {
-        sortListByAttribute(results, sortBy);
-    }
+    sortListByAttribute(results, sortBy);  
     results.forEach(hero => {
         const heroElement = document.createElement('div');
         // Construct a string for the hero's info
@@ -143,15 +138,29 @@ async function getListDetails() {
 }
 
 function sortListByAttribute(list, attribute) {
-    // Assuming that we're dealing with an array of objects
-    list.sort((a, b) => {
-        const valA = (a.info && a.info[attribute]) ? a.info[attribute].toString().toLowerCase() : '';
-        const valB = (b.info && b.info[attribute]) ? b.info[attribute].toString().toLowerCase() : '';
-        if (valA < valB) return -1;
-        if (valA > valB) return 1;
-        return 0;
-    });
+    let len = list.length;
+    for (let i = 0; i < len; i++) {
+        for (let j = 0; j < len - i - 1; j++) {
+            let valA = list[j].info && list[j].info[attribute];
+            let valB = list[j+1].info && list[j+1].info[attribute];
+            // Check if the attribute should be compared as numbers.
+            if (attribute === 'Power') {
+                valA = Number(valA);
+                valB = Number(valB);
+            } else {
+                valA = valA ? valA.toString().toLowerCase() : '';
+                valB = valB ? valB.toString().toLowerCase() : '';
+            }
+            if (valA > valB) {
+                // Swap the elements
+                let temp = list[j];
+                list[j] = list[j + 1];
+                list[j + 1] = temp;
+            }
+        }
+    }
 }
+
 
 function countTruePowers(powers) {
     return Object.values(powers).reduce((count, powerValue) => {
