@@ -48,7 +48,7 @@ async function searchSuperheroes() {
     try {
         const response = await fetch(url);
         let data = await response.json();
-        const limitedResults = data.slice(0, resultLimit); // Limit the results
+        const limitedResults = data.slice(0, resultLimit);
         displaySearchResults(limitedResults);
     } catch (error) {
         console.error('Search error:', error);
@@ -63,20 +63,14 @@ function displaySearchResults(results) {
     if (results.length === 0) {
         searchResultElement.textContent = 'No results found.';
     } 
-
-    // Sort results by the attribute typed by the user, if it is valid
-    results.sort((a, b) => {
-        const valA = a.info[sortBy] ? a.info[sortBy].toString().toLowerCase() : '';
-        const valB = b.info[sortBy] ? b.info[sortBy].toString().toLowerCase() : '';
-
-        if (valA < valB) return -1;
-        if (valA > valB) return 1;
-        return 0;
-    });
-    
+    for (let i = 0; i < results.length; i++) {
+        results[i].info["Power"] = countTruePowers(results[i].powers); 
+    }
+    if (sortBy) {
+        sortListByAttribute(results, sortBy);
+    }
     results.forEach(hero => {
         const heroElement = document.createElement('div');
-
         // Construct a string for the hero's info
         const heroInfo = [];
         for (const key in hero.info) {
@@ -84,7 +78,6 @@ function displaySearchResults(results) {
                 heroInfo.push(`${key}: ${hero.info[key]}`);
             }
         }
-        
         // Construct a string for the hero's powers
         const heroPowers = hero.powers ? Object.keys(hero.powers).filter(power => hero.powers[power] === 'True').join(', ') : 'None';
         heroElement.textContent = `Info: ${heroInfo.join(', ')}, Powers: ${heroPowers}`;
@@ -139,9 +132,40 @@ async function getList() {
 async function getListDetails() {
     const listName = document.getElementById('manageListName').value;
     const response = await fetch(`/api/superhero-lists/${listName}/details`);
+    const attributeToSortBy = document.getElementById('sortAttribute').value.trim();
     const data = await response.json();
+    for (let i = 0; i < data.length; i++) {
+        data[i].info["Power"] = countTruePowers2(data[i].powers); 
+    }
+    sortListByAttribute(data,  attributeToSortBy); 
     const detailsElement = document.getElementById('listDetails');
     detailsElement.textContent = JSON.stringify(data, null, 2);
+}
+
+function sortListByAttribute(list, attribute) {
+    // Assuming that we're dealing with an array of objects
+    list.sort((a, b) => {
+        const valA = (a.info && a.info[attribute]) ? a.info[attribute].toString().toLowerCase() : '';
+        const valB = (b.info && b.info[attribute]) ? b.info[attribute].toString().toLowerCase() : '';
+        if (valA < valB) return -1;
+        if (valA > valB) return 1;
+        return 0;
+    });
+}
+
+function countTruePowers(powers) {
+    return Object.values(powers).reduce((count, powerValue) => {
+      // Increment count if powerValue is "True"
+      if (powerValue === "True") {
+        return count +1;
+      }
+      return count;
+    }, 0);
+  }
+
+function countTruePowers2(powers) {
+    // Assuming 'powers' is an object with boolean values
+    return Object.values(powers).filter(isPower => isPower).length;
 }
 
 // Function to delete a list
