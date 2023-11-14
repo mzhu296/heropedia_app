@@ -46,18 +46,13 @@ async function searchSuperheroes() {
     const searchPattern = document.getElementById('searchPattern').value;
     const resultLimit = parseInt(document.getElementById('resultLimit').value);
     const url = `http://${myurl}:3000/api/search-superheroes?field=${searchField}&pattern=${searchPattern}`;
-
-    try {
-        const response = await fetch(url);
+    const response = await fetch(url);
         let data = await response.json();
         const limitedResults = data.slice(0, resultLimit); // Limit the results
         for (let i = 0; i < data.length; i++) {
             data[i].info["Power"] = countTruePowers(data[i].powers); 
         }
         displaySearchResults(limitedResults);
-    } catch (error) {
-        console.error('Search error:', error);
-    }
 }
 
 function displaySearchResults(results) {
@@ -84,7 +79,7 @@ function displaySearchResults(results) {
 }
 
 document.getElementById('sortBy').addEventListener('change', () => {
-    displaySearchResults(searchResults); // Ensure `searchResults` is available globally or passed appropriately
+    displaySearchResults(searchResults);
 });
 
 // Function to create a new list
