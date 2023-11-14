@@ -62,32 +62,30 @@ async function searchSuperheroes() {
 
 function displaySearchResults(results) {
     const searchResultElement = document.getElementById('searchResult');
-    const sortBy = document.getElementById('sortBy').value.trim(); // Get the selected sort attribute
+    const sortBy = document.getElementById('sortBy').value.trim();
     searchResultElement.innerHTML = '';
+
     if (results.length === 0) {
         searchResultElement.textContent = 'No results found.';
-    } 
-    sortListByAttribute(results, sortBy);  
+        return;
+    }
+
+    sortListByAttribute(results, sortBy);
+    
     results.forEach(hero => {
         const heroElement = document.createElement('div');
-        // Construct a string for the hero's info
-        const heroInfo = [];
-        for (const key in hero.info) {
-            if (hero.info.hasOwnProperty(key)) {
-                heroInfo.push(`${key}: ${hero.info[key]}`);
-            }
-        }
-        // Ensure hero.powers is not null or undefined before processing
-        heroElement.textContent = `Info: ${heroInfo.join(', ')}`;
+        const heroInfo = Object.entries(hero.info)
+            .map(([key, value]) => `${key}: ${value}`)
+            .join(', ');
+        
+        heroElement.textContent = `Info: ${heroInfo}`;
         searchResultElement.appendChild(heroElement);
     });
 }
 
 document.getElementById('sortBy').addEventListener('change', () => {
-    // Assuming `searchResults` is the variable holding your data
-    displaySearchResults(searchResults);
+    displaySearchResults(searchResults); // Ensure `searchResults` is available globally or passed appropriately
 });
-
 
 // Function to create a new list
 async function createList() {
