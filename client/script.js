@@ -77,7 +77,7 @@ function displaySearchResults(results) {
                 heroInfo.push(`${key}: ${hero.info[key]}`);
             }
         }
-        // Construct a string for the hero's powers
+        // Ensure hero.powers is not null or undefined before processing
         const heroPowers = hero.powers ? Object.keys(hero.powers).filter(power => hero.powers[power] === 'True').join(', ') : 'None';
         heroElement.textContent = `Info: ${heroInfo.join(', ')}, Powers: ${heroPowers}`;
         searchResultElement.appendChild(heroElement);
@@ -88,6 +88,7 @@ document.getElementById('sortBy').addEventListener('change', () => {
     // Assuming `searchResults` is the variable holding your data
     displaySearchResults(searchResults);
 });
+
 
 // Function to create a new list
 async function createList() {
