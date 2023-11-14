@@ -41,6 +41,8 @@ async function getPublishers() {
     await fetchAndDisplayData(url, 'publishersResult');
 }
 
+let searchResults = [];
+
 async function searchSuperheroes() {
     const searchField = document.getElementById('searchField').value;
     const searchPattern = document.getElementById('searchPattern').value;
@@ -59,29 +61,35 @@ async function searchSuperheroes() {
 
 function displaySearchResults(results) {
     const searchResultElement = document.getElementById('searchResult');
-    const sortBy = document.getElementById('sortBy').value.trim();
+    const sortBy = document.getElementById('sortBy').value.trim(); // Get the selected sort attribute
     searchResultElement.innerHTML = '';
 
     if (results.length === 0) {
         searchResultElement.textContent = 'No results found.';
-        return;
+    } 
+    for (let i = 0; i < results.length; i++) {
+        if (results[i].powers && typeof results[i].powers === 'object') {
+            results[i].info["Power"] = countTruePowers(results[i].powers); 
+        }
     }
-
-    sortListByAttribute(results, sortBy);
-    
+    sortListByAttribute(results, sortBy);  
     results.forEach(hero => {
         const heroElement = document.createElement('div');
-        const heroInfo = Object.entries(hero.info)
-            .map(([key, value]) => `${key}: ${value}`)
-            .join(', ');
-        
-        heroElement.textContent = `Info: ${heroInfo}`;
+
+        // Construct a string for the hero's info
+        const heroInfo = [];
+        for (const key in hero.info) {
+            if (hero.info.hasOwnProperty(key)) {
+                heroInfo.push(`${key}: ${hero.info[key]}`);
+            }
+        }
+        const heroPowers = hero.powers ? Object.keys(hero.powers).filter(power => hero.powers[power] === 'True').join(', ') : 'None';
+        heroElement.textContent = `Info: ${heroInfo.join(', ')}, Powers: ${heroPowers}`;
         searchResultElement.appendChild(heroElement);
     });
 }
-
 document.getElementById('sortBy').addEventListener('change', () => {
-    displaySearchResults(searchResults); // Ensure `searchResults` is available globally or passed appropriately
+    displaySearchResults(searchResults); 
 });
 
 // Function to create a new list
