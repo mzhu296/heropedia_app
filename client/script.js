@@ -26,18 +26,18 @@ async function fetchAndDisplayData(url, resultElementId) {
 
 async function getSuperheroInfo() {
     const heroId = document.getElementById('heroId').value.trim();
-    const url = `http://${myurl}/api/superheroes/${heroId}`;
+    const url = `http://${myurl}:3000/api/superheroes/${heroId}`;
     await fetchAndDisplayData(url, 'infoResult');
 }
 
 async function getSuperheroPowers() {
     const powersId = document.getElementById('powersId').value.trim();
-    const url = `http://${myurl}/api/superheroes/${powersId}/powers`;
+    const url = `http://${myurl}:3000/api/superheroes/${powersId}/powers`;
     await fetchAndDisplayData(url, 'powersResult');
 }
 
 async function getPublishers() {
-    const url = `http://${myurl}/api/publishers`;
+    const url = `http://${myurl}:3000/api/publishers`;
     await fetchAndDisplayData(url, 'publishersResult');
 }
 
@@ -45,7 +45,7 @@ async function searchSuperheroes() {
     const searchField = document.getElementById('searchField').value;
     const searchPattern = document.getElementById('searchPattern').value;
     const resultLimit = parseInt(document.getElementById('resultLimit').value);
-    const url = `http://${myurl}/api/search-superheroes?field=${searchField}&pattern=${searchPattern}`;
+    const url = `http://${myurl}:3000/api/search-superheroes?field=${searchField}&pattern=${searchPattern}`;
 
     try {
         const response = await fetch(url);
@@ -92,7 +92,7 @@ document.getElementById('sortBy').addEventListener('change', () => {
 // Function to create a new list
 async function createList() {
     const listName = document.getElementById('newListName').value;
-    const response = await fetch(`http://${myurl}/api/superhero-lists`, {
+    const response = await fetch(`http://${myurl}:3000/api/superhero-lists`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json; charset=UTF-8'  },
         body: JSON.stringify({ listName: listName })
@@ -119,7 +119,7 @@ async function addSuperheroesToList() {
 // Function to get a list
 async function getList() {
     const listName = document.getElementById('manageListName').value;
-    const response = await fetch(`http://${myurl}/api/superhero-lists/${listName}`, {
+    const response = await fetch(`http://${myurl}:3000/api/superhero-lists/${listName}`, {
         method: 'GET'
     });
     const data = await response.json();
@@ -130,7 +130,7 @@ async function getList() {
 // Function to get the details of a list
 async function getListDetails() {
     const listName = document.getElementById('manageListName').value;
-    const response = await fetch(`http://${myurl}/api/superhero-lists/${listName}/details`);
+    const response = await fetch(`http://${myurl}:3000/api/superhero-lists/${listName}/details`);
     const attributeToSortBy = document.getElementById('sortAttribute').value.trim();
     const data = await response.json();
     for (let i = 0; i < data.length; i++) {
@@ -184,7 +184,7 @@ function countTruePowers2(powers) {
 // Function to delete a list
 async function deleteList() {
     const listName = document.getElementById('manageListName').value;
-    const response = await fetch(`http://${myurl}/api/superhero-lists/${listName}`, {
+    const response = await fetch(`http://${myurl}:3000/api/superhero-lists/${listName}`, {
         method: 'DELETE'
     });
     const data = await response.json();
