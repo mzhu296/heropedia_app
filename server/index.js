@@ -45,7 +45,7 @@ app.get('/api/superheroes/:id/powers', (req, res) => {
         const powers = getSuperheroPowersById(superhero);
         res.json(powers);
     } else {
-        res.status(404).json({ error: 'Superhero not found' });
+        res.status(404).json({ error: 'Power not found' });
     }
 });
 
@@ -175,8 +175,7 @@ app.get('/api/superhero-lists/:listName/details', (req, res) => {
             if (superhero) {
                 const powers = superheroPowers.find(power => power.hero_names.toLowerCase() === superhero.name.toLowerCase());
                 return {
-                    id: superhero.id,
-                    name: superhero.name,
+                    
                     info: superhero,
                     powers: powers ? Object.keys(powers).filter(power => powers[power] === 'True') : []
                 };

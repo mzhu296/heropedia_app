@@ -46,13 +46,16 @@ let searchResults = [];
 async function searchSuperheroes() {
     const searchField = document.getElementById('searchField').value;
     const searchPattern = document.getElementById('searchPattern').value;
-    const resultLimit = parseInt(document.getElementById('resultLimit').value);
+    let resultLimit = parseInt(document.getElementById('resultLimit').value);
+    if (isNaN(resultLimit)) {
+        resultLimit = 800;
+    }
     const url = `http://${myurl}:3000/api/search-superheroes?field=${searchField}&pattern=${searchPattern}`;
 
     try {
         const response = await fetch(url);
         let data = await response.json();
-        const limitedResults = data.slice(0, resultLimit); // Limit the results
+        const limitedResults = data.slice(0,resultLimit); // Limit the results
         displaySearchResults(limitedResults);
     } catch (error) {
         console.error('Search error:', error);
@@ -72,7 +75,9 @@ function displaySearchResults(results) {
             results[i].info["Power"] = countTruePowers(results[i].powers); 
         }
     }
-    sortListByAttribute(results, sortBy);  
+    if(sortBy!="none"){
+        sortListByAttribute(results, sortBy);  
+    }
     results.forEach(hero => {
         const heroElement = document.createElement('div');
 
@@ -88,9 +93,6 @@ function displaySearchResults(results) {
         searchResultElement.appendChild(heroElement);
     });
 }
-document.getElementById('sortBy').addEventListener('change', () => {
-    displaySearchResults(searchResults); 
-});
 
 // Function to create a new list
 async function createList() {
@@ -167,7 +169,6 @@ function sortListByAttribute(list, attribute) {
         }
     }
 }
-
 
 function countTruePowers(powers) {
     return Object.values(powers).reduce((count, powerValue) => {
