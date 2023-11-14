@@ -78,8 +78,7 @@ function displaySearchResults(results) {
             }
         }
         // Ensure hero.powers is not null or undefined before processing
-        const heroPowers = hero.powers ? Object.keys(hero.powers).filter(power => hero.powers[power] === 'True').join(', ') : 'None';
-        heroElement.textContent = `Info: ${heroInfo.join(', ')}, Powers: ${heroPowers}`;
+        heroElement.textContent = `Info: ${heroInfo.join(', ')}`;
         searchResultElement.appendChild(heroElement);
     });
 }
@@ -107,7 +106,7 @@ async function createList() {
 async function addSuperheroesToList() {
     const listName = document.getElementById('existingListName').value;
     const ids = document.getElementById('superheroIds').value.split(',').map(Number);
-    const response = await fetch(`http://${myurl}/api/superhero-lists/${listName}`, {
+    const response = await fetch(`http://${myurl}:3000/api/superhero-lists/${listName}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json; charset=UTF-8' },
         body: JSON.stringify({ superheroIds: ids })
