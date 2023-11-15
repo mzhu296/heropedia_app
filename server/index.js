@@ -8,10 +8,10 @@ const superheroInfo = require('./superhero_info.json');
 const superheroPowers = require('./superhero_powers.json');
 const mainDir = path.join(__dirname, '../');
 const clientDir = path.join(__dirname, '../client');
-const cors = require('cors');
+//const cors = require('cors');
 app.use(express.static(mainDir));
 app.use(express.static(clientDir));
-app.use(cors())
+//app.use(cors())
 
 // Function to get superhero information by ID
 function getSuperheroInfoById(superheroId) {
