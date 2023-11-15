@@ -43,7 +43,7 @@ async function getSuperheroPowers() {
         return;
     }
     const url = `api/superheroes/${powersId}/powers`;
-    await fetchAndDisplayData(url, 'powersResult');
+    await fetchAndDisplayData(url, 'powerResult');
 }
 
 async function getPublishers() {
