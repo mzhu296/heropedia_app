@@ -54,40 +54,88 @@ app.get('/api/publishers', (req, res) => {
     const publishers = superheroInfo.map(hero => hero.Publisher);
     res.json(publishers);
 });
-
 //this method will search for superheroes by a specific field and pattern
 app.get('/api/search-superheroes', (req, res) => {
     const field = req.query.field;
     const pattern = req.query.pattern;
-
     let matches = [];
 
     if (field === 'name') {
         matches = superheroInfo
             .filter(hero => hero.name.toLowerCase().includes(pattern.toLowerCase()))
             .map(match => ({
-                id: match.id,
-                name: match.name,
                 info: match,
                 powers: superheroPowers.find(power => power.hero_names.toLowerCase() === match.name.toLowerCase())
             }));
-    } else if (field === 'info') {
+    } else if (field === 'Gender') {
         matches = superheroInfo
-            .filter(hero => hero.Info.toLowerCase().includes(pattern.toLowerCase()))
+            .filter(hero => hero.Gender.toLowerCase().includes(pattern.toLowerCase()))
             .map(match => ({
-                id: match.id,
-                name: match.name,
                 info: match,
                 powers: superheroPowers.find(power => power.hero_names.toLowerCase() === match.name.toLowerCase())
             }));
-    } else if (field === 'power') {
+    } else if (field === 'Eye color') {
+        matches = superheroInfo
+            .filter(hero =>  hero['Eye color'].toLowerCase().includes(pattern.toLowerCase()))
+            .map(match => ({
+                info: match,
+                powers: superheroPowers.find(power => power.hero_names.toLowerCase() === match.name.toLowerCase())
+            }));
+    } else if (field === 'Race') {
+        matches = superheroInfo
+            .filter(hero => hero.Race.toLowerCase().includes(pattern.toLowerCase()))
+            .map(match => ({
+                info: match,
+                powers: superheroPowers.find(power => power.hero_names.toLowerCase() === match.name.toLowerCase())
+            }));
+    } else if (field === 'Hair color') {
+        matches = superheroInfo
+            .filter(hero =>  hero['Hair color'].toLowerCase().includes(pattern.toLowerCase()))
+            .map(match => ({
+                info: match,
+                powers: superheroPowers.find(power => power.hero_names.toLowerCase() === match.name.toLowerCase())
+            }));
+    } else if (field === 'Height') {
+        matches = superheroInfo
+            .filter(hero => hero.Height.toString().includes(pattern.toString()))
+            .map(match => ({
+                info: match,
+                powers: superheroPowers.find(power => power.hero_names.toLowerCase() === match.name.toLowerCase())
+            }));
+    } else if (field === 'Publisher') {
+        matches = superheroInfo
+            .filter(hero =>  hero.Publisher.toLowerCase().includes(pattern.toLowerCase()))
+            .map(match => ({
+                info: match,
+                powers: superheroPowers.find(power => power.hero_names.toLowerCase() === match.name.toLowerCase())
+            }));
+    } else if (field === 'Skin color') {
+        matches = superheroInfo
+            .filter(hero =>  hero['Skin color'].toLowerCase().includes(pattern.toLowerCase()))
+            .map(match => ({
+                info: match,
+                powers: superheroPowers.find(power => power.hero_names.toLowerCase() === match.name.toLowerCase())
+            }));
+    } else if (field === 'Alignment') {
+        matches = superheroInfo
+            .filter(hero => hero.Alignment.toLowerCase().includes(pattern.toLowerCase()))
+            .map(match => ({
+                info: match,
+                powers: superheroPowers.find(power => power.hero_names.toLowerCase() === match.name.toLowerCase())
+            }));
+    } else if (field === 'Weight') {
+        matches = superheroInfo
+            .filter(hero => hero.Weight.toString().includes(pattern.toString()))
+            .map(match => ({
+                info: match,
+                powers: superheroPowers.find(power => power.hero_names.toLowerCase() === match.name.toLowerCase())
+            }));
+    } else if (field === 'Power') {
         matches = superheroPowers
             .filter(hero => hero[pattern] === 'True')
             .map(powerMatch => {
                 let match = superheroInfo.find(hero => hero.name.toLowerCase() === powerMatch.hero_names.toLowerCase());
                 return match ? {
-                    id: match.id,
-                    name: match.name,
                     info: match,
                     powers: Object.keys(powerMatch).filter(power => powerMatch[power] === 'True')
                 } : null;
@@ -175,7 +223,6 @@ app.get('/api/superhero-lists/:listName/details', (req, res) => {
             if (superhero) {
                 const powers = superheroPowers.find(power => power.hero_names.toLowerCase() === superhero.name.toLowerCase());
                 return {
-                    
                     info: superhero,
                     powers: powers ? Object.keys(powers).filter(power => powers[power] === 'True') : []
                 };

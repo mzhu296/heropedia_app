@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function () {
     searchButton.addEventListener('click', searchSuperheroes);
 });
 
-let myurl = window.location.hostname;
+//let myurl = window.location.hostname;
 
 async function fetchAndDisplayData(url, resultElementId) {
     try {
@@ -26,18 +26,28 @@ async function fetchAndDisplayData(url, resultElementId) {
 
 async function getSuperheroInfo() {
     const heroId = document.getElementById('heroId').value.trim();
-    const url = `http://${myurl}:3000/api/superheroes/${heroId}`;
+    if (!heroId) {
+        const resultElement = document.getElementById('infoResult');
+        resultElement.textContent = 'Error: No Superhero ID provided';
+        return;
+    }
+    const url = `api/superheroes/${heroId}`;
     await fetchAndDisplayData(url, 'infoResult');
 }
 
 async function getSuperheroPowers() {
     const powersId = document.getElementById('powersId').value.trim();
-    const url = `http://${myurl}:3000/api/superheroes/${powersId}/powers`;
+    if (!powersId) {
+        const resultElement = document.getElementById('powerResult');
+        resultElement.textContent = 'Error: No Superhero ID provided';
+        return;
+    }
+    const url = `api/superheroes/${powersId}/powers`;
     await fetchAndDisplayData(url, 'powersResult');
 }
 
 async function getPublishers() {
-    const url = `http://${myurl}:3000/api/publishers`;
+    const url = `api/publishers`;
     await fetchAndDisplayData(url, 'publishersResult');
 }
 
@@ -50,7 +60,7 @@ async function searchSuperheroes() {
     if (isNaN(resultLimit)) {
         resultLimit = 800;
     }
-    const url = `http://${myurl}:3000/api/search-superheroes?field=${searchField}&pattern=${searchPattern}`;
+    const url = `api/search-superheroes?field=${searchField}&pattern=${searchPattern}`;
 
     try {
         const response = await fetch(url);
@@ -80,8 +90,6 @@ function displaySearchResults(results) {
     }
     results.forEach(hero => {
         const heroElement = document.createElement('div');
-
-        // Construct a string for the hero's info
         const heroInfo = [];
         for (const key in hero.info) {
             if (hero.info.hasOwnProperty(key)) {
@@ -97,13 +105,18 @@ function displaySearchResults(results) {
 // Function to create a new list
 async function createList() {
     const listName = document.getElementById('newListName').value;
-    const response = await fetch(`http://${myurl}:3000/api/superhero-lists`, {
+    const detailsElement = document.getElementById('listDetails');
+    if (!listName) {
+        const resultElement = document.getElementById('infoResult');
+        detailsElement.textContent = 'Error: List Name can not be blank';
+        return;
+    }
+    const response = await fetch(`api/superhero-lists`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json; charset=UTF-8'  },
         body: JSON.stringify({ listName: listName })
     });
     const data = await response.json();
-    const detailsElement = document.getElementById('listDetails');
     detailsElement.textContent = JSON.stringify(data, null, 2);
 }
 
@@ -111,7 +124,7 @@ async function createList() {
 async function addSuperheroesToList() {
     const listName = document.getElementById('existingListName').value;
     const ids = document.getElementById('superheroIds').value.split(',').map(Number);
-    const response = await fetch(`http://${myurl}:3000/api/superhero-lists/${listName}`, {
+    const response = await fetch(`api/superhero-lists/${listName}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json; charset=UTF-8' },
         body: JSON.stringify({ superheroIds: ids })
@@ -124,7 +137,7 @@ async function addSuperheroesToList() {
 // Function to get a list
 async function getList() {
     const listName = document.getElementById('manageListName').value;
-    const response = await fetch(`http://${myurl}:3000/api/superhero-lists/${listName}`, {
+    const response = await fetch(`api/superhero-lists/${listName}`, {
         method: 'GET'
     });
     const data = await response.json();
@@ -135,7 +148,7 @@ async function getList() {
 // Function to get the details of a list
 async function getListDetails() {
     const listName = document.getElementById('manageListName').value;
-    const response = await fetch(`http://${myurl}:3000/api/superhero-lists/${listName}/details`);
+    const response = await fetch(`api/superhero-lists/${listName}/details`);
     const attributeToSortBy = document.getElementById('sortAttribute').value.trim();
     const data = await response.json();
     for (let i = 0; i < data.length; i++) {
@@ -188,7 +201,7 @@ function countTruePowers2(powers) {
 // Function to delete a list
 async function deleteList() {
     const listName = document.getElementById('manageListName').value;
-    const response = await fetch(`http://${myurl}:3000/api/superhero-lists/${listName}`, {
+    const response = await fetch(`api/superhero-lists/${listName}`, {
         method: 'DELETE'
     });
     const data = await response.json();
